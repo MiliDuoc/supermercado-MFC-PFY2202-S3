@@ -5,15 +5,7 @@
 } from "@mui/material"
 
 import { NavLink } from "react-router"
-
-const opciones = [
-  ["Inicio", "/"],
-  ["Agregar", "/agregar"],
-  ["Inventario", "/inventario"],
-  ["Carrito", "/carrito"],
-  ["Tiendas", "/tiendas"],
-  ["Contacto", "/contacto"]
-]
+import { OPCIONES_MENU } from "../constants/menu"
 
 function MenuInferior() {
   return (
@@ -37,7 +29,7 @@ function MenuInferior() {
           gap: 0.5
         }}
       >
-        {opciones.map(([texto, ruta]) => (
+        {OPCIONES_MENU.map(({ texto, ruta }) => (
           <Button
             key={ruta}
             component={NavLink}

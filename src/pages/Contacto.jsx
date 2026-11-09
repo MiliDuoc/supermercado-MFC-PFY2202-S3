@@ -1,131 +1,145 @@
 import { useState } from "react"
+import {
+  Alert,
+  Box,
+  Button,
+  Paper,
+  TextField,
+  Typography
+} from "@mui/material"
+
+const regexNombre =
+  /^[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,50}$/
+
+const regexCorreo =
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function Contacto() {
-  const [formulario, setFormulario] = useState({
+  const [datos, setDatos] = useState({
     nombre: "",
     correo: "",
-    mensaje: "",
+    mensaje: ""
   })
 
+  const [errores, setErrores] = useState({})
   const [enviado, setEnviado] = useState(false)
 
-  const manejarCambio = (evento) => {
+  const cambiar = (evento) => {
     const { name, value } = evento.target
 
-    setFormulario({
-      ...formulario,
-      [name]: value,
-    })
+    setDatos((actual) => ({
+      ...actual,
+      [name]: value
+    }))
+
+    setErrores((actual) => ({
+      ...actual,
+      [name]: ""
+    }))
+
+    setEnviado(false)
   }
 
-  const manejarEnvio = (evento) => {
+  const enviar = (evento) => {
     evento.preventDefault()
+
+    const nuevosErrores = {}
+
+    if (!regexNombre.test(datos.nombre.trim())) {
+      nuevosErrores.nombre =
+        "Ingresa un nombre válido."
+    }
+
+    if (!regexCorreo.test(datos.correo.trim())) {
+      nuevosErrores.correo =
+        "Ingresa un correo válido."
+    }
+
+    if (datos.mensaje.trim().length < 10) {
+      nuevosErrores.mensaje =
+        "El mensaje debe tener al menos 10 caracteres."
+    }
+
+    setErrores(nuevosErrores)
+
+    if (Object.keys(nuevosErrores).length > 0) {
+      return
+    }
 
     setEnviado(true)
 
-    setFormulario({
+    setDatos({
       nombre: "",
       correo: "",
-      mensaje: "",
+      mensaje: ""
     })
   }
 
   return (
-    <section>
-      <div className="titulo-seccion">
-        <div>
-          <p className="etiqueta">Atención al cliente</p>
-          <h2>Contáctanos</h2>
-          <p>
-            Envíanos tus consultas y nuestro equipo se pondrá en contacto contigo.
-          </p>
-        </div>
-      </div>
+    <Box>
+      <Typography variant="h4" gutterBottom>
+        Contacto
+      </Typography>
 
-      <div className="contacto-contenedor">
-        <form
-          className="formulario-contacto"
-          onSubmit={manejarEnvio}
+      <Typography color="text.secondary" sx={{ mb: 3 }}>
+        Envíanos tus consultas o comentarios.
+      </Typography>
+
+      <Paper
+        component="form"
+        onSubmit={enviar}
+        elevation={2}
+        sx={{
+          p: 3,
+          maxWidth: 650,
+          display: "grid",
+          gap: 2
+        }}
+      >
+        <TextField
+          label="Nombre"
+          name="nombre"
+          value={datos.nombre}
+          onChange={cambiar}
+          error={Boolean(errores.nombre)}
+          helperText={errores.nombre}
+        />
+
+        <TextField
+          label="Correo electrónico"
+          name="correo"
+          value={datos.correo}
+          onChange={cambiar}
+          error={Boolean(errores.correo)}
+          helperText={errores.correo}
+        />
+
+        <TextField
+          label="Mensaje"
+          name="mensaje"
+          multiline
+          rows={4}
+          value={datos.mensaje}
+          onChange={cambiar}
+          error={Boolean(errores.mensaje)}
+          helperText={errores.mensaje}
+        />
+
+        <Button
+          type="submit"
+          variant="contained"
+          color="success"
         >
-          <div className="campo">
-            <label htmlFor="nombre">
-              Nombre
-            </label>
+          Enviar mensaje
+        </Button>
 
-            <input
-              id="nombre"
-              name="nombre"
-              type="text"
-              value={formulario.nombre}
-              onChange={manejarCambio}
-              placeholder="Ingresa tu nombre"
-              required
-            />
-          </div>
-
-          <div className="campo">
-            <label htmlFor="correo">
-              Correo electrónico
-            </label>
-
-            <input
-              id="correo"
-              name="correo"
-              type="email"
-              value={formulario.correo}
-              onChange={manejarCambio}
-              placeholder="correo@ejemplo.cl"
-              required
-            />
-          </div>
-
-          <div className="campo">
-            <label htmlFor="mensaje">
-              Mensaje
-            </label>
-
-            <textarea
-              id="mensaje"
-              name="mensaje"
-              rows="5"
-              value={formulario.mensaje}
-              onChange={manejarCambio}
-              placeholder="Escribe tu consulta"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="boton-principal"
-          >
-            Enviar mensaje
-          </button>
-
-          {enviado && (
-            <p className="mensaje-exito">
-              Tu mensaje fue enviado correctamente.
-            </p>
-          )}
-        </form>
-
-        <aside className="datos-contacto">
-          <h3>Información de contacto</h3>
-
-          <p>
-            <strong>Teléfono:</strong> +56 57 222 0000
-          </p>
-
-          <p>
-            <strong>Correo:</strong> contacto@supermercadomfc.cl
-          </p>
-
-          <p>
-            <strong>Horario:</strong> Lunes a viernes, 09:00 a 18:00
-          </p>
-        </aside>
-      </div>
-    </section>
+        {enviado && (
+          <Alert severity="success">
+            Mensaje enviado correctamente.
+          </Alert>
+        )}
+      </Paper>
+    </Box>
   )
 }
 
