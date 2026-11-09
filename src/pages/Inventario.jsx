@@ -1,73 +1,41 @@
-﻿import {
-  Chip,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
+﻿import { useState } from "react"
+import {
+  Box,
   Typography
 } from "@mui/material"
+
 import { useInventario } from "../context/InventarioContext"
-import {
-  ESTADOS_PRODUCTO,
-  obtenerEstadoStock
-} from "../constants/estadosProducto"
+import FiltroCategoria from "../components/FiltroCategoria"
+import ArticuloTable from "../components/ArticuloTable"
 
 function Inventario() {
   const { articulos } = useInventario()
+  const [categoria, setCategoria] = useState("Todas")
+
+  const articulosFiltrados =
+    categoria === "Todas"
+      ? articulos
+      : articulos.filter(
+          (articulo) => articulo.tipo === categoria
+        )
 
   return (
-    <>
+    <Box>
       <Typography variant="h4" gutterBottom>
         Inventario completo
       </Typography>
 
       <Typography color="text.secondary" sx={{ mb: 3 }}>
-        Artículos registrados: {articulos.length}
+        Visualiza y filtra todos los artículos disponibles.
       </Typography>
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell><strong>Producto</strong></TableCell>
-              <TableCell><strong>Marca</strong></TableCell>
-              <TableCell><strong>Tipo</strong></TableCell>
-              <TableCell><strong>Stock</strong></TableCell>
-              <TableCell><strong>Estado</strong></TableCell>
-            </TableRow>
-          </TableHead>
+      <FiltroCategoria
+        categoria={categoria}
+        onCambiar={setCategoria}
+      />
 
-          <TableBody>
-            {articulos.map((articulo) => {
-              const estado = obtenerEstadoStock(articulo.stock)
-
-              return (
-                <TableRow key={articulo.id}>
-                  <TableCell>{articulo.nombre}</TableCell>
-                  <TableCell>{articulo.marca}</TableCell>
-                  <TableCell>{articulo.tipo}</TableCell>
-                  <TableCell>{articulo.stock}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={estado}
-                      color={
-                        estado === ESTADOS_PRODUCTO.DISPONIBLE
-                          ? "success"
-                          : "warning"
-                      }
-                      size="small"
-                    />
-                  </TableCell>
-                </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </>
+      <ArticuloTable articulos={articulosFiltrados} />
+    </Box>
   )
 }
 

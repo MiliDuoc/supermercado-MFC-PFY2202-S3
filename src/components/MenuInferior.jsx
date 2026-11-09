@@ -1,53 +1,58 @@
-﻿import { NavLink } from "react-router-dom"
-import { Box, Button, Paper } from "@mui/material"
-import { RUTAS } from "../constants/rutas"
+﻿import {
+  Box,
+  Button,
+  Paper
+} from "@mui/material"
+
+import { NavLink } from "react-router"
 
 const opciones = [
-  ["Inicio", RUTAS.INICIO],
-  ["Agregar", RUTAS.AGREGAR],
-  ["Inventario", RUTAS.INVENTARIO],
-  ["Tiendas", RUTAS.TIENDAS],
-  ["Contacto", RUTAS.CONTACTO]
+  ["Inicio", "/"],
+  ["Agregar", "/agregar"],
+  ["Inventario", "/inventario"],
+  ["Carrito", "/carrito"],
+  ["Tiendas", "/tiendas"],
+  ["Contacto", "/contacto"]
 ]
 
 function MenuInferior() {
   return (
     <Paper
       component="nav"
+      elevation={8}
       sx={{
         position: "fixed",
         bottom: 0,
         left: 0,
         right: 0,
-        p: 1,
-        zIndex: 1000
+        zIndex: 1000,
+        p: 1
       }}
-      elevation={8}
     >
       <Box
         sx={{
           display: "flex",
           justifyContent: "center",
           flexWrap: "wrap",
-          gap: 1
+          gap: 0.5
         }}
       >
         {opciones.map(([texto, ruta]) => (
-          <NavLink
+          <Button
             key={ruta}
+            component={NavLink}
             to={ruta}
             end={ruta === "/"}
-            style={{ textDecoration: "none" }}
+            color="success"
+            sx={{
+              "&.active": {
+                backgroundColor: "success.main",
+                color: "white"
+              }
+            }}
           >
-            {({ isActive }) => (
-              <Button
-                color="success"
-                variant={isActive ? "contained" : "text"}
-              >
-                {texto}
-              </Button>
-            )}
-          </NavLink>
+            {texto}
+          </Button>
         ))}
       </Box>
     </Paper>
